@@ -119,9 +119,9 @@ void Adafruit_MCP23017::begin(uint8_t addr) {
 	Wire.begin();
 
 	// set defaults!
-	// all inputs on port A and B
-	writeRegister(MCP23017_IODIRA,0xff);
-	writeRegister(MCP23017_IODIRB,0xff);
+	// all outputs on port A and B
+	writeRegister(MCP23017_IODIRA,0x00);
+	writeRegister(MCP23017_IODIRB,0x00);
 }
 
 /**
@@ -176,6 +176,21 @@ uint8_t Adafruit_MCP23017::readGPIO(uint8_t b) {
 
 	Wire.requestFrom(MCP23017_ADDRESS | i2caddr, 1);
 	return wirerecv();
+}
+
+/**
+ * Write a single port, A or B
+ * Parameter b should be 0 for GPIOA, and 1 for GPIOB.
+ */
+void Adafruit_MCP23017::writeGPIO(uint8_t b, uint8_t ba) {
+	Wire.beginTransmission(MCP23017_ADDRESS | i2caddr);
+	if (b == 0)
+		wiresend(MCP23017_GPIOA);
+	else {
+		wiresend(MCP23017_GPIOB);
+	}
+	wiresend(ba);
+	Wire.endTransmission();
 }
 
 /**
